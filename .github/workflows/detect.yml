@@ -22,13 +22,15 @@ jobs:
             -   name: Setup GitHub
                 if: ${{ steps.exec-script.outputs.new_file }}
                 run: |
-                    git config user.name github-actions
-                    git config user.email github-actions@github.com
+                    git config user.name "GitHub Actions Bot"
+                    git config user.email "github-actions[bot]@users.noreply.github.com"
 
             -   name: Submit data
                 if: ${{ steps.exec-script.outputs.new_file }}
                 run: |
                     cd monitor-data
+                    git config user.name "GitHub Actions Bot"
+                    git config user.email "github-actions[bot]@users.noreply.github.com"
                     git add ./data
                     git commit -m 'add new data'
                     git push https://${{ secrets.DATA_REPO_PAT }}@github.com/${{ secrets.DATA_REPO }}.git main
