@@ -1,0 +1,13 @@
+{
+	"name": "monitor",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"detect": "node scripts/detect.js"
+	},
+	"author": "helloint",
+	"repository": "https://github.com/helloint/monitor",
+	"license": "MIT"
+}

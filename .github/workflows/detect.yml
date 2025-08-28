@@ -1,0 +1,47 @@
+name: Detect
+on:
+    workflow_dispatch:
+#    schedule:
+#        -   cron: '*/10 * * * *'
+
+jobs:
+    fetch:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Checkout data repo
+                run: |
+                    git clone https://${{ secrets.DATA_REPO_PAT }}@github.com/${{ secrets.DATA_REPO }}.git monitor-data
+
+            -   name: Run script
+                id: exec-script
+                run: node scripts/detect.js monitor-data
+
+            -   name: Setup GitHub
+                if: ${{ steps.exec-script.outputs.new_file }}
+                run: |
+                    git config user.name github-actions
+                    git config user.email github-actions@github.com
+
+            -   name: Submit data
+                if: ${{ steps.exec-script.outputs.new_file }}
+                run: |
+                    cd monitor-data
+                    git add ./data
+                    git commit -m 'add new data'
+                    git push https://${{ secrets.DATA_REPO_PAT }}@github.com/${{ secrets.DATA_REPO }}.git main
+        outputs:
+            notify: ${{ steps.exec-script.outputs.notify }}
+            data: ${{ steps.exec-script.outputs.data }}
+
+    notify:
+        needs: [ fetch ]
+        if: needs.fetch.outputs.notify == 'true'
+        uses: ./.github/workflows/notify.yml
+        with:
+            msg: ${{ needs.fetch.outputs.data }}
+        secrets:
+            notify_server: ${{ secrets.notify_server }}
+            notify_token: ${{ secrets.notify_token }}

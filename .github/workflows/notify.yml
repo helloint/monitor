@@ -1,0 +1,27 @@
+name: Notify
+on:
+    workflow_call:
+        inputs:
+            msg:
+                required: true
+                type: string
+        secrets:
+            notify_server:
+                required: true
+            notify_token:
+                required: true
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Notify
+              run: |
+                  node scripts/notify.js
+              env:
+                  msg: ${{ inputs.msg }}
+                  notify_server: ${{ secrets.notify_server }}
+                  notify_token: ${{ secrets.notify_token }}
