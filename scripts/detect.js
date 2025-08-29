@@ -5,13 +5,14 @@ import {areJsonEqual, executeWithDelay, getCurrentDateTimeStringPath, readDataFi
 const args = process.argv.slice(2);
 const DATA_ROOT = args.length > 0 ? (!args[0].endsWith('/') ? args[0] + '/' : args[0]) : './';
 
+let hasNewFile = false;
+let needsNotify = false;
+const data = [];
+
 const main = async (isRandom) => {
-	console.log(`main(random=${!!isRandom}) start`);
+	console.log(`main(random:${!!isRandom}) start`);
 	const minutes = new Date().getMinutes();
 	const configs = readDataFile(`${DATA_ROOT}config.json`);
-	let hasNewFile = false;
-	let needsNotify = false;
-	const data = [];
 	for (const {id, url, options, format, filters, condition, notify, notifyCondition, errorCondition, every = 1, random, enable} of configs) {
 		if (enable === false || minutes % every !== 0 || !!isRandom !== !!random) {
 			console.log(`monitor id: ${id} skipped`);
@@ -51,10 +52,8 @@ const main = async (isRandom) => {
 	if (hasNewFile) {
 		setOutput('new_file', true);
 	}
-	setOutput('data', data);
-	setOutput('notify', needsNotify);
 
-	console.log(`main(random=${!!isRandom}) end`);
+	console.log(`main(random:${!!isRandom}) end`);
 }
 
 /**
@@ -123,7 +122,7 @@ const setOutput = (key, value) => {
 		const output = process.env['GITHUB_OUTPUT']
 		fs.appendFileSync(output, `${key}=${JSON.stringify(value)}${os.EOL}`)
 	} catch (e) {
-		// GitHub output failed.
+		console.error('GitHub output failed:', e.message);
 	}
 }
 
@@ -147,3 +146,6 @@ const processOptions = (options) => {
 
 await main();
 await executeWithDelay(main, true);
+
+setOutput('data', data);
+setOutput('notify', needsNotify);
