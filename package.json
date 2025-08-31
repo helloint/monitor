@@ -1,11 +1,10 @@
 {
 	"name": "monitor",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "Monitor data file and record changed versions",
 	"type": "module",
 	"scripts": {
-		"detect": "node scripts/detect.js"
+		"detect": "detect.js"
 	},
 	"author": "helloint",
 	"repository": "https://github.com/helloint/monitor",

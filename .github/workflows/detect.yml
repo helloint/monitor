@@ -17,7 +17,7 @@ jobs:
 
             -   name: Run script
                 id: exec-script
-                run: node scripts/detect.js monitor-data
+                run: detect.js monitor-data
 
             -   name: Setup GitHub
                 if: ${{ steps.exec-script.outputs.new_file }}

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import fs from 'fs';
 import os from 'os';
 import {areJsonEqual, executeWithDelay, getCurrentDateTimeStringPath, readDataFile, writeDataFile} from "./utils.js";
