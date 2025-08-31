@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 async function main() {
 	const msg = process.env.msg;
 	const notifyServer = process.env.notify_server;

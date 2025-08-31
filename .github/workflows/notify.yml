@@ -20,7 +20,7 @@ jobs:
 
             - name: Notify
               run: |
-                  scripts/notify.js
+                  node scripts/notify.js
               env:
                   msg: ${{ inputs.msg }}
                   notify_server: ${{ secrets.notify_server }}
