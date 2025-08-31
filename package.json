@@ -4,7 +4,7 @@
 	"description": "Monitor data file and record changed versions",
 	"type": "module",
 	"scripts": {
-		"detect": "detect.js"
+		"detect": "node detect.js"
 	},
 	"author": "helloint",
 	"repository": "https://github.com/helloint/monitor",

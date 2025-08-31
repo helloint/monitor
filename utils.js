@@ -8,8 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export const writeDataFile = (relativeFilePath, data) => {
 	try {
-		const dataDir = path.resolve(__dirname, '..');
-		const filePath = path.join(dataDir, relativeFilePath);
+		const filePath = path.join(__dirname, relativeFilePath);
 
 		// Ensure the directory exists
 		const dir = path.dirname(filePath);
@@ -25,9 +24,7 @@ export const writeDataFile = (relativeFilePath, data) => {
 };
 
 export const readDataFile = (relativeFilePath) => {
-	// Resolve the file path relative to the ./data/ directory
-	const dataDir = path.resolve(__dirname, '..'); // Adjust as necessary to get the data directory
-	const filePath = path.join(dataDir, relativeFilePath);
+	const filePath = path.join(__dirname, relativeFilePath);
 
 	try {
 		const data = fs.readFileSync(filePath, 'utf8');
