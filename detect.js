@@ -74,10 +74,17 @@ const monitorFile = async (id, url, options = null, format = false, filters = nu
 
 	const newData = await getContent(response);
 	const folderName = id.replace(/\//g, '_');
-	const currentFile = `${DATA_ROOT}data/${folderName}/current.json`;
+	const ext = typeof newData === 'string' ? '.txt' : '.json';
+	const currentFile = `${DATA_ROOT}data/${folderName}/current${ext}`;
 	const previousData = readDataFile(currentFile, 'utf8');
-	if (!areJsonEqual(newData, previousData, filters) && (!condition || (eval(`newData.${condition}`) !== eval(`previousData.${condition}`)))) {
-		const timestampPath = getCurrentDateTimeStringPath();
+	const timestampPath = getCurrentDateTimeStringPath() + ext;
+	if (typeof newData === 'string') {
+		if (newData !== previousData) {
+			writeDataFile(currentFile, newData);
+			writeDataFile(`${DATA_ROOT}data/${folderName}/${timestampPath}`, newData);
+			return newData;
+		}
+	} else if (!areJsonEqual(newData, previousData, filters) && (!condition || (eval(`newData.${condition}`) !== eval(`previousData.${condition}`)))) {
 		writeDataFile(currentFile, JSON.stringify(newData, null, format ? '\t' : null));
 		writeDataFile(`${DATA_ROOT}data/${folderName}/${timestampPath}`, JSON.stringify(newData, null, format ? '\t' : null));
 		return newData;
@@ -88,8 +95,12 @@ const monitorFile = async (id, url, options = null, format = false, filters = nu
 
 const getContent = async (response) => {
 	if (response.ok) {
-		// 请求成功，返回解析后的JSON数据
-		return await response.json();
+		// 请求成功，返回解析后的数据
+		const contentType = response.headers.get('content-type');
+		if (contentType && contentType.includes('application/json')) {
+			return await response.json();
+		}
+		return await response.text();
 	} else {
 		// 请求失败
 		const status = response.status;
