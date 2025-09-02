@@ -34,6 +34,16 @@ jobs:
                     git add ./data
                     git commit -m 'add new data'
                     git push https://${{ secrets.DATA_REPO_PAT }}@github.com/${{ secrets.DATA_REPO }}.git main
+
+            -   name: Cancel job
+                if: ${{ !steps.exec-script.outputs.new_file }}
+                env:
+                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                run: |
+                    echo "No data were updated. Exiting..."
+                    gh run cancel ${{ github.run_id }}
+                    gh run watch ${{ github.run_id }}
+
         outputs:
             notify: ${{ steps.exec-script.outputs.notify }}
             data: ${{ steps.exec-script.outputs.data }}
