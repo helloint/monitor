@@ -4,7 +4,8 @@
 	"description": "Monitor data file and record changed versions",
 	"type": "module",
 	"scripts": {
-		"detect": "node detect.js"
+		"detect": "node detect.js",
+		"bumpVersion": "npx bbump"
 	},
 	"author": "helloint",
 	"repository": "https://github.com/helloint/monitor",
