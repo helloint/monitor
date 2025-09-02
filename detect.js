@@ -11,9 +11,9 @@ const data = [];
 
 const main = async (isRandom) => {
 	console.log(`main(random:${!!isRandom}) start`);
-	const minutes = new Date().getMinutes();
+	const minutes = new Date().getHours() * 60 + new Date().getMinutes();
 	const configs = readDataFile(`${DATA_ROOT}config.json`);
-	for (const {id, url, options, format, filters, condition, notify, notifyCondition, errorCondition, every = 1, random, enable} of configs) {
+	for (const {id, url, options, format, filters, condition, notify, notifyCondition, errorCondition, every = 1, random, record = true, enable} of configs) {
 		if (enable === false || minutes % every !== 0 || !!isRandom !== !!random) {
 			console.log(`monitor id: ${id} skipped`);
 			continue;
@@ -23,7 +23,7 @@ const main = async (isRandom) => {
 		const processedOptions = processOptions(options);
 		try {
 			const result = await monitorFile(id, url, processedOptions, format, filters, condition);
-			if (result) {
+			if (result && record) {
 				hasNewFile = true;
 				if (notify || notifyCondition) {
 					if (!notifyCondition || eval(`result.${notifyCondition}`)) {
