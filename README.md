@@ -57,9 +57,10 @@ schedule:
 | every           | 每隔几分钟执行一次，默认每次执行    | 1       | No       |
 | random          | 执行时间是否加入随机Delay     | No      | No       |
 | enable          | 是否启用                | Yes     | No       |
-| format          | 保存时是否格式化            | No      | No       |
+| record          | 是否保存                | Yes     | No       |
 | filters         | 文件差异比较时，需要忽略的属性     |         | No       |
 | condition       | 文件差异比较时，需满足的额外条件    |         | No       |
+| format          | 保存时是否格式化            | No      | No       |
 | notify          | 是否启用通知              | No      | No       |
 | notifyCondition | 通知的额外条件             |         | No       |
 | errorCondition  | 异常条件，满足时会记录以及发送消息通知 |         | No       |
