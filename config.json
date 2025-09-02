@@ -1,6 +1,10 @@
 [
 	{
 		"id": "simple_get",
+		"url": "https://www.baidu.com"
+	},
+	{
+		"id": "simple_get",
 		"url": "https://dummyjson.com/test",
 		"every": 5,
 		"notify": true,
