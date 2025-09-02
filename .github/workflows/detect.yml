@@ -37,6 +37,8 @@ jobs:
 
             -   name: Cancel job
                 if: ${{ !steps.exec-script.outputs.new_file }}
+                env:
+                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 run: |
                     echo "No data were updated. Exiting..."
                     gh run cancel ${{ github.run_id }}
