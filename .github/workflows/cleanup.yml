@@ -25,11 +25,20 @@ jobs:
 
                   echo "Deleting cancelled runs older than $DAYS_OLD days (before $CUTOFF_DATE) from workflow ID: $workflow_id..."
 
-                  # 删除该工作流中已取消的运行
-                  gh api repos/${{ github.repository }}/actions/workflows/$workflow_id/runs \
-                    --jq ".workflow_runs[] | select(.status == \"cancelled\" and .created_at < \"$CUTOFF_DATE\") | .id" \
-                    | xargs -I {} gh api repos/${{ github.repository }}/actions/runs/{} -X DELETE
+                  # 原始代码添加统计
+                  RUN_IDS=$(gh api repos/${{ github.repository }}/actions/workflows/$workflow_id/runs \
+                    --jq ".workflow_runs[] | select(.status == \"cancelled\" and .created_at < \"$CUTOFF_DATE\") | .id")
 
-                  echo "Cleanup completed!"
+                  COUNT=$(echo "$RUN_IDS" | wc -w)
+                  echo "Deleting $COUNT cancelled runs..."
+
+                  # 使用循环而不是xargs以便计数
+                  DELETED=0
+                  for id in $RUN_IDS; do
+                    gh api repos/${{ github.repository }}/actions/runs/$id -X DELETE
+                    DELETED=$((DELETED + 1))
+                  done
+
+                  echo "Deleted $DELETED cancelled runs"
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
