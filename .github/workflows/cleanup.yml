@@ -23,14 +23,14 @@ jobs:
                   # 获取特定工作流的ID
                   workflow_id=$(gh api repos/${{ github.repository }}/actions/workflows --jq '.workflows[] | select(.name == "Detect") | .id')
 
-                  echo "Deleting cancelled runs older than $DAYS_OLD days (before $CUTOFF_DATE) from workflow ID: $workflow_id..."
-
                   # 原始代码添加统计
-                  RUN_IDS=$(gh api repos/${{ github.repository }}/actions/workflows/$workflow_id/runs \
-                    --jq ".workflow_runs[] | select(.conclusion == \"cancelled\" and .created_at < \"$CUTOFF_DATE\") | .id")
+                  RUN_IDS=$(gh api "repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?created=<$CUTOFF_DATE" \
+                    --paginate \
+                    --jq ".workflow_runs[] | select(.conclusion == \"cancelled\") | .id")
 
                   COUNT=$(echo "$RUN_IDS" | wc -w)
-                  echo "Deleting $COUNT cancelled runs..."
+
+                  echo "Deleting $COUNT cancelled runs older than $DAYS_OLD days (before $CUTOFF_DATE) from workflow ID: $workflow_id..."
 
                   # 使用循环而不是xargs以便计数
                   DELETED=0
