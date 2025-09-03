@@ -23,17 +23,13 @@ jobs:
                   # 获取特定工作流的ID
                   workflow_id=$(gh api repos/${{ github.repository }}/actions/workflows --jq '.workflows[] | select(.name == "Detect") | .id')
 
-                  # 最快速的批量删除方案
                   MAX_PARALLEL=10  # 根据API限制调整并行度
 
-                  # 原始代码添加统计
                   gh api "repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?per_page=100&created=<$CUTOFF_DATE" \
                     --paginate \
                     --jq ".workflow_runs[] | .id" \
                     | xargs -P $MAX_PARALLEL -I {} bash -c '
-                        echo "Deleting run {}..."
                         gh api repos/${{ github.repository }}/actions/runs/{} -X DELETE --silent
-                        echo "Deleted run {}"
                       '
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
