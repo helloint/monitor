@@ -1,4 +1,4 @@
-name: Cleanup specific workflow runs
+name: Cleanup
 
 on:
     push:
@@ -22,6 +22,8 @@ jobs:
 
                   # 获取特定工作流的ID
                   workflow_id=$(gh api repos/${{ github.repository }}/actions/workflows --jq '.workflows[] | select(.name == "Detect") | .id')
+
+                  echo "Deleting cancelled runs older than $DAYS_OLD days (before $CUTOFF_DATE) from workflow ID: $workflow_id..."
 
                   # 删除该工作流中已取消的运行
                   gh api repos/${{ github.repository }}/actions/workflows/$workflow_id/runs \
