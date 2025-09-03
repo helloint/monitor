@@ -1,6 +1,7 @@
 name: Cleanup specific workflow runs
 
 on:
+    push:
     schedule:
         - cron: '0 3 * * *'
     workflow_dispatch:
