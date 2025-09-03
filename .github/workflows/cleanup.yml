@@ -1,0 +1,32 @@
+name: Cleanup specific workflow runs
+
+on:
+    schedule:
+        - cron: '0 3 * * *'
+    workflow_dispatch:
+        inputs:
+            days_old:
+                description: 'Delete cancelled runs older than X days'
+                required: false
+                default: '30'
+
+jobs:
+    cleanup:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Cleanup specific workflow
+              run: |
+                  DAYS_OLD=${INPUT_DAYS_OLD:-30}
+                  CUTOFF_DATE=$(date -d "$DAYS_OLD days ago" +%Y-%m-%dT%H:%M:%SZ)
+
+                  # 获取特定工作流的ID
+                  workflow_id=$(gh api repos/${{ github.repository }}/actions/workflows --jq '.workflows[] | select(.name == "Detect") | .id')
+
+                  # 删除该工作流中已取消的运行
+                  gh api repos/${{ github.repository }}/actions/workflows/$workflow_id/runs \
+                    --jq ".workflow_runs[] | select(.status == \"cancelled\" and .created_at < \"$CUTOFF_DATE\") | .id" \
+                    | xargs -I {} gh api repos/${{ github.repository }}/actions/runs/{} -X DELETE
+
+                  echo "Cleanup completed!"
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
