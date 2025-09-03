@@ -24,9 +24,9 @@ jobs:
                   workflow_id=$(gh api repos/${{ github.repository }}/actions/workflows --jq '.workflows[] | select(.name == "Detect") | .id')
 
                   # 原始代码添加统计
-                  RUN_IDS=$(gh api "repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?created=<$CUTOFF_DATE" \
+                  RUN_IDS=$(gh api "repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?per_page=100&created=<$CUTOFF_DATE" \
                     --paginate \
-                    --jq ".workflow_runs[] | select(.conclusion == \"cancelled\") | .id")
+                    --jq ".workflow_runs[] | .id")
 
                   COUNT=$(echo "$RUN_IDS" | wc -w)
 
