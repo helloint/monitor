@@ -1,14 +1,10 @@
 name: Cleanup
 
 on:
+    push:
     schedule:
-        - cron: '0/5 * * * *'
+        - cron: '* 6 * * *'
     workflow_dispatch:
-        inputs:
-            days_old:
-                description: 'Delete cancelled runs older than X days'
-                required: false
-                default: '30'
 
 jobs:
     cleanup:
@@ -16,17 +12,14 @@ jobs:
         steps:
             - name: Cleanup specific workflow
               run: |
-                  DAYS_OLD=${INPUT_DAYS_OLD:-30}
-                  CUTOFF_DATE=$(date -d "$DAYS_OLD days ago" +%Y-%m-%dT%H:%M:%SZ)
-
                   # 获取特定工作流的ID
                   workflow_id=$(gh api repos/${{ github.repository }}/actions/workflows --jq '.workflows[] | select(.name == "Detect") | .id')
 
                   MAX_PARALLEL=10  # 根据API限制调整并行度
 
-                  gh api "repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?per_page=100&created=<$CUTOFF_DATE" \
+                  gh api "repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?per_page=100" \
                     --paginate \
-                    --jq ".workflow_runs[] | .id" \
+                    --jq ".workflow_runs[] | select(.conclusion == \"cancelled\") | .id" \
                     | xargs -P $MAX_PARALLEL -I {} bash -c '
                         gh api repos/${{ github.repository }}/actions/runs/{} -X DELETE --silent
                       '
