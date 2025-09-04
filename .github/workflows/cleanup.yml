@@ -13,11 +13,12 @@ jobs:
             - name: Cleanup specific workflow
               run: |
                   # 获取特定工作流的ID
-                  workflow_id=$(gh api repos/${{ github.repository }}/actions/workflows --jq '.workflows[] | select(.name == "Detect") | .id')
+                  WORKFLOW_PATH=".github/workflows/detect.yml"
+                  WORKFLOW_ID=$(gh api repos/${{ github.repository }}/actions/workflows --jq ".workflows[] | select(.path == \"$WORKFLOW_PATH\") | .id")
 
                   MAX_PARALLEL=10  # 根据API限制调整并行度
 
-                  gh api "repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?per_page=100" \
+                  gh api "repos/${{ github.repository }}/actions/workflows/$WORKFLOW_ID/runs?per_page=100" \
                     --paginate \
                     --jq ".workflow_runs[] | select(.conclusion == \"cancelled\") | .id" \
                     | xargs -P $MAX_PARALLEL -I {} bash -c '
