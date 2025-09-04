@@ -3,7 +3,7 @@ name: Cleanup
 on:
     push:
     schedule:
-        - cron: '* 6 * * *'
+        - cron: '* 1 * * *'
     workflow_dispatch:
 
 jobs:
