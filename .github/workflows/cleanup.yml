@@ -16,7 +16,7 @@ jobs:
                   WORKFLOW_PATH=".github/workflows/detect.yml"
                   WORKFLOW_ID=$(gh api repos/${{ github.repository }}/actions/workflows --jq ".workflows[] | select(.path == \"$WORKFLOW_PATH\") | .id")
 
-                  MAX_PARALLEL=10  # 根据API限制调整并行度
+                  MAX_PARALLEL=2  # 根据API限制调整并行度
 
                   gh api "repos/${{ github.repository }}/actions/workflows/$WORKFLOW_ID/runs?per_page=100" \
                     --jq ".workflow_runs[] | select(.conclusion == \"cancelled\") | .id" \
