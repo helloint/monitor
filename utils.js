@@ -149,5 +149,7 @@ export const generateDailyMinutes = (date, count = 10) => {
 	}
 
 	// 转换为数组并排序
-	return Array.from(minutes).sort((a, b) => a - b).slice(0, count);
+	const ret = Array.from(minutes).sort((a, b) => a - b).slice(0, count);
+	console.log(`ret: ` + JSON.stringify(ret));
+	return ret;
 }

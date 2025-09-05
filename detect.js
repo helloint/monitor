@@ -13,6 +13,7 @@ const main = async (isRandom) => {
 	console.log(`main(random:${!!isRandom}) start`);
 	const date = new Date();
 	const minutesOfDay = date.getHours() * 60 + date.getMinutes();
+	console.log(`minutesOfDay: ${minutesOfDay}`);
 	const configs = readDataFile(`${DATA_ROOT}config.json`);
 	for (const {id, url, options, format, filters, condition, notify, notifyCondition, errorCondition, every, random, record = true, randomMin, perDay, enable} of configs) {
 		if (enable === false || !!isRandom !== !!random || (every && minutesOfDay % every !== 0) || (randomMin && perDay && !generateDailyMinutes(date, perDay).includes(minutesOfDay))) {
