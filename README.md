@@ -57,21 +57,23 @@ schedule:
 ```
 
 ## 完整参数说明
-| Configuration   | Instruction         | Default | Required |
-|-----------------|---------------------|---------|----------|
-| id              | 任务的唯一标识             |         | Yes      |
-| url             | 需要轮询的数据文件地址         |         | Yes      |
-| options         | fetch的options       |         | No       |
-| every           | 每隔几分钟执行一次，默认每次执行    | 1       | No       |
-| random          | 执行时间是否加入随机Delay     | No      | No       |
-| enable          | 是否启用                | Yes     | No       |
-| record          | 是否保存                | Yes     | No       |
-| filters         | 文件差异比较时，需要忽略的属性     |         | No       |
-| condition       | 文件差异比较时，需满足的额外条件    |         | No       |
-| format          | 保存时是否格式化            | No      | No       |
-| notify          | 是否启用通知              | No      | No       |
-| notifyCondition | 通知的额外条件             |         | No       |
-| errorCondition  | 异常条件，满足时会记录以及发送消息通知 |         | No       |
+| Configuration   | Instruction               | Default | Required |
+|-----------------|---------------------------|---------|----------|
+| id              | 任务的唯一标识                   |         | Yes      |
+| url             | 需要轮询的数据文件地址               |         | Yes      |
+| options         | fetch的options             |         | No       |
+| every           | 每隔几分钟执行一次，默认每次执行          | 1       | No       |
+| random          | 执行时间(秒)是否加入随机Delay        | False   | No       |
+| randomMin       | 是否在随机分钟时执行，需配合perDay使用    |         | No       |
+| perDay          | 每天随机运行的总次数，需配合randomMin使用 |         | No       |
+| enable          | 是否启用                      | True    | No       |
+| record          | 是否保存                      | True    | No       |
+| filters         | 文件差异比较时，需要忽略的属性           |         | No       |
+| condition       | 文件差异比较时，需满足的额外条件          |         | No       |
+| format          | 保存时是否格式化                  | False   | No       |
+| notify          | 是否启用通知                    | False   | No       |
+| notifyCondition | 通知的额外条件                   |         | No       |
+| errorCondition  | 异常条件，满足时会记录以及发送消息通知       |         | No       |
 
 ## Actions参数说明
 | Repository secrets | Instruction | Required |

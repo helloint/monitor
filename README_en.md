@@ -54,22 +54,24 @@ For example, Linux's cron:
 }
 ```
 
-## Full Parameter Description
-| Configuration   | Instruction                                              | Default | Required |
-|-----------------|----------------------------------------------------------|---------|----------|
-| id              | Unique identifier for the task                           |         | Yes      |
-| url             | URL of the data file to poll                             |         | Yes      |
-| options         | Fetch options                                            |         | No       |
-| every           | Execution interval in minutes (default: every execution) | 1       | No       |
-| random          | Whether to add random delay to execution time            | No      | No       |
-| enable          | Whether to enable the task                               | Yes     | No       |
-| record          | Whether to save the data                                 | Yes     | No       |
-| filters         | Properties to ignore during file comparison              |         | No       |
-| condition       | Additional conditions for file comparison                |         | No       |
-| format          | Whether to format the saved data                         | No      | No       |
-| notify          | Whether to enable notifications                          | No      | No       |
-| notifyCondition | Additional conditions for notifications                  |         | No       |
-| errorCondition  | Error conditions that trigger logging and notifications  |         | No       |
+# Complete Parameter Description
+| Configuration   | Instruction                                                    | Default | Required |
+|-----------------|----------------------------------------------------------------|---------|----------|
+| id              | Unique identifier for the task                                 |         | Yes      |
+| url             | URL of the data file to poll                                   |         | Yes      |
+| options         | Fetch options                                                  |         | No       |
+| every           | Execution interval in minutes (default: every execution)       | 1       | No       |
+| random          | Whether to add random delay (in seconds) to execution time     | False   | No       |
+| randomMin       | Whether to execute at random minutes (requires perDay)         |         | No       |
+| perDay          | Total number of random executions per day (requires randomMin) |         | No       |
+| enable          | Whether to enable the task                                     | True    | No       |
+| record          | Whether to save the data                                       | True    | No       |
+| filters         | Properties to ignore during file comparison                    |         | No       |
+| condition       | Additional conditions for file comparison                      |         | No       |
+| format          | Whether to format the saved data                               | False   | No       |
+| notify          | Whether to enable notifications                                | False   | No       |
+| notifyCondition | Additional conditions for notifications                        |         | No       |
+| errorCondition  | Error conditions that trigger logging and notifications        |         | No       |
 
 ## Actions Parameter Description
 | Repository Secrets | Instruction                              | Required |

@@ -17,7 +17,11 @@ async function main() {
 			method: 'POST',
 			body: Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&')
 		};
-		await fetch(`${notifyServer}/webapi/entry.cgi?api=SYNO.Chat.External&method=incoming&version=2`, options);
+		try {
+			await fetch(`${notifyServer}/webapi/entry.cgi?api=SYNO.Chat.External&method=incoming&version=2`, options);
+		} catch (error) {
+			console.error('Fetch request failed:', error.message);
+		}
 	} else {
 		if (!notifyServer) console.log('notify_server required');
 		if (!notifyToken) console.log('notify_token required');

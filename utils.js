@@ -107,3 +107,47 @@ export const executeWithDelay = (fn, ...args) => {
 		}, delay);
 	});
 }
+
+export const generateDailyMinutes = (date, count = 10) => {
+	// 参数验证和规范化
+	if (count < 1) count = 1;
+	if (count > 1440) count = 1440;
+
+	// 将日期转换为一致的字符串格式（YYYY-MM-DD）
+	const dateStr = typeof date === 'string' ? date : date.toISOString().slice(0, 10);
+	const normalizedDate = new Date(dateStr + 'T00:00:00Z'); // 使用UTC时间确保一致性
+
+	// 创建确定性的种子（使用日期字符串的哈希值）
+	let seed = 0;
+	for (let i = 0; i < dateStr.length; i++) {
+		seed = ((seed << 5) - seed) + dateStr.charCodeAt(i);
+		seed = seed & seed; // 转换为32位整数
+	}
+	seed = Math.abs(seed);
+
+	// 使用确定性随机数生成器
+	const minutes = new Set();
+	let attempts = 0;
+	const maxAttempts = count * 10; // 防止无限循环
+
+	while (minutes.size < count && attempts < maxAttempts) {
+		// 简单的LCG算法，确保确定性
+		seed = (seed * 1664525 + 1013904223) % 2147483647;
+
+		// 生成0-1439之间的分钟数
+		const minute = Math.abs(seed) % 1440;
+		minutes.add(minute);
+
+		attempts++;
+	}
+
+	// 如果因为重复而无法生成足够数量，补充剩余的数字
+	if (minutes.size < count) {
+		for (let i = 0; i < 1440 && minutes.size < count; i++) {
+			minutes.add(i);
+		}
+	}
+
+	// 转换为数组并排序
+	return Array.from(minutes).sort((a, b) => a - b).slice(0, count);
+}
