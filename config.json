@@ -4,6 +4,13 @@
 		"url": "https://www.baidu.com"
 	},
 	{
+		"id": "10_times_daily_in_random_time",
+		"url": "https://dummyjson.com/test",
+		"random": true,
+		"randomMin": true,
+		"perDay": 10
+	},
+	{
 		"id": "simple_get",
 		"url": "https://dummyjson.com/test",
 		"every": 5,

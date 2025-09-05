@@ -1,6 +1,6 @@
 import fs from 'fs';
 import os from 'os';
-import {areJsonEqual, executeWithDelay, getCurrentDateTimeStringPath, readDataFile, writeDataFile} from "./utils.js";
+import {areJsonEqual, executeWithDelay, generateDailyMinutes, getCurrentDateTimeStringPath, readDataFile, writeDataFile} from "./utils.js";
 
 const args = process.argv.slice(2);
 const DATA_ROOT = args.length > 0 ? (!args[0].endsWith('/') ? args[0] + '/' : args[0]) : './';
@@ -11,10 +11,11 @@ const data = [];
 
 const main = async (isRandom) => {
 	console.log(`main(random:${!!isRandom}) start`);
-	const minutes = new Date().getHours() * 60 + new Date().getMinutes();
+	const date = new Date();
+	const minutesOfDay = date.getHours() * 60 + date.getMinutes();
 	const configs = readDataFile(`${DATA_ROOT}config.json`);
-	for (const {id, url, options, format, filters, condition, notify, notifyCondition, errorCondition, every = 1, random, record = true, enable} of configs) {
-		if (enable === false || minutes % every !== 0 || !!isRandom !== !!random) {
+	for (const {id, url, options, format, filters, condition, notify, notifyCondition, errorCondition, every, random, record = true, randomMin, perDay, enable} of configs) {
+		if (enable === false || !!isRandom !== !!random || (every && minutesOfDay % every !== 0) || (randomMin && perDay && !generateDailyMinutes(date, perDay).includes(minutesOfDay))) {
 			console.log(`monitor id: ${id} skipped`);
 			continue;
 		}
