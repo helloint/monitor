@@ -15,7 +15,14 @@ const main = async (isRandom) => {
 	const minutesOfDay = date.getHours() * 60 + date.getMinutes();
 	console.log(`minutesOfDay: ${minutesOfDay}`);
 	const configs = readDataFile(`${DATA_ROOT}config.json`);
-	for (const {id, url, options, format, filters, condition, notify, notifyCondition, errorCondition, every, random, record = true, randomMin, perDay, enable} of configs) {
+	for (const config of configs) {
+		const {
+			id, url, options,
+			format, filters, condition,
+			notify, notifyCondition, errorCondition,
+			every, random, record = true, randomMin, perDay,
+			enable
+		} = config;
 		if (enable === false || !!isRandom !== !!random || (every && minutesOfDay % every !== 0) || (randomMin && perDay && !generateDailyMinutes(date, perDay).includes(minutesOfDay))) {
 			console.log(`monitor id: ${id} skipped`);
 			continue;
@@ -28,7 +35,7 @@ const main = async (isRandom) => {
 			if (result && record) {
 				hasNewFile = true;
 				if (notify || notifyCondition) {
-					if (!notifyCondition || eval(`result.${notifyCondition}`)) {
+					if (!notifyCondition || eval(`result${notifyCondition}`)) {
 						const msg = `id: ${id} content changed, condition: ${notifyCondition || true} match`;
 						console.log(msg);
 						data.push(msg);

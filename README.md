@@ -52,7 +52,7 @@ schedule:
 	],
 	"condition": "length",
 	"notify": true,
-	"notifyCondition": "length > 0"
+	"notifyCondition": ".length > 0"
 }
 ```
 
