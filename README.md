@@ -40,7 +40,7 @@ schedule:
 }
 ```
 
-### 当文件内容符合特定条件时，发送消息通知 (目前暂只支持群晖Synology Chat)
+### 当文件内容符合特定条件时，发送消息通知 (支持群晖Synology Chat和pushplus推送加)
 ```json
 {
 	"id": "livescore",
@@ -52,6 +52,7 @@ schedule:
 	],
 	"condition": "length",
 	"notify": true,
+	"notifyType": "synology,pushplus",
 	"notifyCondition": ".length > 0"
 }
 ```
@@ -72,6 +73,7 @@ schedule:
 | condition       | 文件差异比较时，需满足的额外条件          |         | No       |
 | format          | 保存时是否格式化                  | False   | No       |
 | notify          | 是否启用通知                    | False   | No       |
+| notifyType      | 通知类型，支持synology、pushplus，多个用逗号分隔 | synology | No       |
 | notifyCondition | 通知的额外条件                   |         | No       |
 | errorCondition  | 异常条件，满足时会记录以及发送消息通知       |         | No       |
 
@@ -80,5 +82,34 @@ schedule:
 |--------------------|-------------|----------|
 | DATA_REPO          | 数据仓库        | Yes      |
 | DATA_REPO_PAT      | 访问数据仓库的PAT  | Yes      |
-| NOTIFY_SERVER      | 通知服务的请求URL  | No       |
-| NOTIFY_TOKEN       | 通知服务的Token  | No       |
+| NOTIFY_SERVER      | Synology Chat服务器地址 | No       |
+| NOTIFY_TOKEN       | Synology Chat webhook token | No       |
+| PUSHPLUS_NOTIFY_TOKEN | pushplus推送token | No       |
+| PUSHPLUS_NOTIFY_SERVER | pushplus服务器地址 (可选，默认使用官方地址) | No       |
+
+## 通知配置说明
+
+### 配置方式
+通知类型在 `config.json` 中通过 `notifyType` 字段配置，支持以下值：
+- `synology` - 使用Synology Chat通知
+- `pushplus` - 使用pushplus推送加通知  
+- `synology,pushplus` - 同时使用两种通知方式
+
+### Synology Chat通知
+- 在config.json中设置 `notifyType: "synology"`（或不设置，默认就是）
+- 设置环境变量 `NOTIFY_SERVER` 为您的Synology Chat服务器地址
+- 设置环境变量 `NOTIFY_TOKEN` 为您的Synology Chat webhook token
+
+### pushplus推送加通知
+- 在config.json中设置 `notifyType: "pushplus"`
+- 设置环境变量 `PUSHPLUS_NOTIFY_TOKEN` 为您的pushplus token
+- 可选设置环境变量 `PUSHPLUS_NOTIFY_SERVER` 自定义服务器地址
+
+### 多选通知
+- 在config.json中设置 `notifyType: "synology,pushplus"`
+- 同时配置上述两种通知方式的环境变量
+
+### 获取pushplus token的方法
+1. 访问 [pushplus.plus](http://www.pushplus.plus) 注册账号
+2. 登录后在"个人中心"获取您的token
+3. 将token设置为 `PUSHPLUS_NOTIFY_TOKEN` 环境变量
