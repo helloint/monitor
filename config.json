@@ -11,10 +11,27 @@
 		"perDay": 10
 	},
 	{
-		"id": "simple_get",
+		"id": "simple_get_synology",
 		"url": "https://dummyjson.com/test",
 		"every": 5,
 		"notify": true,
+		"notifyType": "synology",
+		"filters": ["requestId"]
+	},
+	{
+		"id": "simple_get_pushplus",
+		"url": "https://dummyjson.com/test",
+		"every": 7,
+		"notify": true,
+		"notifyType": "pushplus",
+		"filters": ["requestId"]
+	},
+	{
+		"id": "simple_get_both",
+		"url": "https://dummyjson.com/test",
+		"every": 10,
+		"notify": true,
+		"notifyType": "synology,pushplus",
 		"filters": ["requestId"]
 	}
 ]
