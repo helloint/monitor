@@ -34,7 +34,7 @@ const main = async (isRandom) => {
 			const result = await monitorFile(id, url, processedOptions, format, filters, condition);
 			if (result && record) {
 				hasNewFile = true;
-				if (notify || notifyCondition) {
+				if (notify) {
 					if (!notifyCondition || eval(`result${notifyCondition}`)) {
 						const msg = `id: ${id} content changed, condition: ${notifyCondition || true} match`;
 						console.log(msg);
