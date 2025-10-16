@@ -8,6 +8,7 @@ const DATA_ROOT = args.length > 0 ? (!args[0].endsWith('/') ? args[0] + '/' : ar
 let hasNewFile = false;
 let needsNotify = false;
 const data = [];
+const notifyMessages = []; // 存储需要通知的消息和对应的通知类型
 
 const main = async (isRandom) => {
 	console.log(`main(random:${!!isRandom}) start`);
@@ -19,7 +20,7 @@ const main = async (isRandom) => {
 		const {
 			id, url, options,
 			format, filters, condition,
-			notify, notifyCondition, errorCondition,
+			notify, notifyType, notifyCondition, errorCondition,
 			every, random, record = true, randomMin, perDay,
 			enable
 		} = config;
@@ -34,12 +35,15 @@ const main = async (isRandom) => {
 			const result = await monitorFile(id, url, processedOptions, format, filters, condition);
 			if (result && record) {
 				hasNewFile = true;
-				if (notify || notifyCondition) {
+				if (notify) {
 					if (!notifyCondition || eval(`result${notifyCondition}`)) {
 						const msg = `id: ${id} content changed, condition: ${notifyCondition || true} match`;
 						console.log(msg);
 						data.push(msg);
 						needsNotify = true;
+						
+						// 添加通知消息和对应的通知类型
+						addNotifyMessage(msg, notifyType);
 					}
 				}
 
@@ -48,12 +52,18 @@ const main = async (isRandom) => {
 					console.log(msg);
 					data.push(msg);
 					needsNotify = true;
+					
+					// 添加通知消息和对应的通知类型
+					addNotifyMessage(msg, notifyType);
 				}
 			}
 		} catch (e) {
 			console.error('There was a problem with your fetch operation:', e);
 			data.push(e.toString());
 			needsNotify = true;
+			
+			// 添加通知消息和对应的通知类型（错误情况下也使用相同的通知类型）
+			addNotifyMessage(e.toString(), notifyType);
 		}
 		console.log(`monitor id: ${id} end`);
 	}
@@ -164,8 +174,25 @@ const processOptions = (options) => {
 	return options;
 }
 
+// 添加通知消息的辅助函数
+const addNotifyMessage = (message, notifyType) => {
+	const types = notifyType ? 
+		notifyType.split(',').map(type => type.trim()) : 
+		['synology']; // 默认使用synology
+	
+	notifyMessages.push({
+		message: message,
+		types: types
+	});
+};
+
 await main();
 await executeWithDelay(main, true);
 
 setOutput('data', data);
 setOutput('notify', needsNotify);
+
+// 只有当需要通知时才输出通知消息
+if (needsNotify) {
+	setOutput('notify_messages', notifyMessages);
+}

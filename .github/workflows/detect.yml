@@ -47,13 +47,16 @@ jobs:
         outputs:
             notify: ${{ steps.exec-script.outputs.notify }}
             data: ${{ steps.exec-script.outputs.data }}
+            notify_messages: ${{ steps.exec-script.outputs.notify_messages }}
 
     notify:
         needs: [ fetch ]
         if: needs.fetch.outputs.notify == 'true'
         uses: ./.github/workflows/notify.yml
         with:
-            msg: ${{ needs.fetch.outputs.data }}
+            messages: ${{ needs.fetch.outputs.notify_messages }}
         secrets:
             notify_server: ${{ secrets.notify_server }}
             notify_token: ${{ secrets.notify_token }}
+            pushplus_notify_token: ${{ secrets.pushplus_notify_token }}
+            pushplus_notify_server: ${{ secrets.pushplus_notify_server }}
