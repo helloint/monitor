@@ -46,7 +46,7 @@ async function sendSynologyNotification(message) {
 	
 	const data = {
 		payload: JSON.stringify({
-			text: message
+			text: message.join('\n')
 		}),
 		token: notifyToken
 	};
