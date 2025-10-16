@@ -38,9 +38,6 @@ const main = async (isRandom) => {
 					if (!notifyCondition || eval(`result${notifyCondition}`)) {
 						const msg = `id: ${id} content changed, condition: ${notifyCondition || true} match`;
 						console.log(msg);
-						notifyData.push(msg);
-
-						// 添加通知消息和对应的通知类型
 						addNotifyMessage(msg, notifyType);
 					}
 				}
@@ -48,17 +45,11 @@ const main = async (isRandom) => {
 				if (errorCondition && eval(`result.${errorCondition}`)) {
 					const msg = `id: ${id} errors, condition: ${errorCondition} match`;
 					console.log(msg);
-					notifyData.push(msg);
-
-					// 添加通知消息和对应的通知类型
 					addNotifyMessage(msg, notifyType);
 				}
 			}
 		} catch (e) {
 			console.error('There was a problem with your fetch operation:', e);
-			notifyData.push(e.toString());
-
-			// 添加通知消息和对应的通知类型（错误情况下也使用相同的通知类型）
 			addNotifyMessage(e.toString(), notifyType);
 		}
 		console.log(`monitor id: ${id} end`);
