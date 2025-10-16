@@ -7,15 +7,14 @@ const DATA_ROOT = args.length > 0 ? (!args[0].endsWith('/') ? args[0] + '/' : ar
 
 let hasNewFile = false;
 let needsNotify = false;
-const data = [];
-const notifyMessages = []; // 存储需要通知的消息和对应的通知类型
+const notifyData = [];
 
 const main = async (isRandom) => {
 	console.log(`main(random:${!!isRandom}) start`);
 	const date = new Date();
 	const minutesOfDay = date.getHours() * 60 + date.getMinutes();
 	console.log(`minutesOfDay: ${minutesOfDay}`);
-	const configs = readDataFile(`${DATA_ROOT}config.json`);
+	const configs = readDataFile(`${DATA_ROOT}config2.json`);
 	for (const config of configs) {
 		const {
 			id, url, options,
@@ -39,10 +38,6 @@ const main = async (isRandom) => {
 					if (!notifyCondition || eval(`result${notifyCondition}`)) {
 						const msg = `id: ${id} content changed, condition: ${notifyCondition || true} match`;
 						console.log(msg);
-						data.push(msg);
-						needsNotify = true;
-						
-						// 添加通知消息和对应的通知类型
 						addNotifyMessage(msg, notifyType);
 					}
 				}
@@ -50,19 +45,11 @@ const main = async (isRandom) => {
 				if (errorCondition && eval(`result.${errorCondition}`)) {
 					const msg = `id: ${id} errors, condition: ${errorCondition} match`;
 					console.log(msg);
-					data.push(msg);
-					needsNotify = true;
-					
-					// 添加通知消息和对应的通知类型
 					addNotifyMessage(msg, notifyType);
 				}
 			}
 		} catch (e) {
 			console.error('There was a problem with your fetch operation:', e);
-			data.push(e.toString());
-			needsNotify = true;
-			
-			// 添加通知消息和对应的通知类型（错误情况下也使用相同的通知类型）
 			addNotifyMessage(e.toString(), notifyType);
 		}
 		console.log(`monitor id: ${id} end`);
@@ -176,23 +163,22 @@ const processOptions = (options) => {
 
 // 添加通知消息的辅助函数
 const addNotifyMessage = (message, notifyType) => {
-	const types = notifyType ? 
-		notifyType.split(',').map(type => type.trim()) : 
+	const types = notifyType ?
+		notifyType.split(',').map(type => type.trim()) :
 		['synology']; // 默认使用synology
-	
-	notifyMessages.push({
+
+	notifyData.push({
 		message: message,
 		types: types
 	});
+
+	needsNotify = true;
 };
 
 await main();
 await executeWithDelay(main, true);
 
-setOutput('data', data);
 setOutput('notify', needsNotify);
-
-// 只有当需要通知时才输出通知消息
 if (needsNotify) {
-	setOutput('notify_messages', notifyMessages);
+	setOutput('data', notifyData);
 }

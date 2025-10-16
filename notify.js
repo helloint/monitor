@@ -1,12 +1,15 @@
 async function main() {
-	const messages = process.env.messages; // 从detect.js传入的通知消息列表
+	const data = process.env.data;
 
-	if (messages && messages.trim() !== '') {
-		const messageList = JSON.parse(messages);
-		console.log(`收到 ${messageList.length} 条通知消息`);
+	console.debug(data);
+
+	if (data && data.trim() !== '') {
+		const notifyItems = JSON.parse(data);
+		console.log(`收到 ${notifyItems.length} 条通知消息`);
 
 		// 处理每条通知消息
-		for (const notifyItem of messageList) {
+		for (const notifyItem of notifyItems) {
+			console.debug(JSON.stringify(notifyItem));
 			const { message, types } = notifyItem;
 			console.log(`发送消息: ${message}`);
 			console.log(`通知类型: ${types.join(', ')}`);
@@ -49,7 +52,7 @@ async function sendSynologyNotification(message) {
 
 	const data = {
 		payload: JSON.stringify({
-			text: message.join('\n')
+			text: message
 		}),
 		token: notifyToken
 	};
@@ -63,11 +66,15 @@ async function sendSynologyNotification(message) {
 
 	console.debug(`${JSON.stringify(options)}`);
 
+	console.debug(notifyServer);
+
 	try {
 		await fetch(`${notifyServer}/webapi/entry.cgi?api=SYNO.Chat.External&method=incoming&version=2`, options);
 		console.log('Synology Chat notification sent successfully');
 	} catch (error) {
 		console.error('Synology Chat notification failed:', error.message);
+		console.error(error);
+		console.error(JSON.stringify(error));
 	}
 }
 
