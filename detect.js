@@ -23,9 +23,17 @@ const main = async (isRandom) => {
 			every, random, record = true, randomMin, perDay,
 			enable
 		} = config;
-		if (enable === false || !!isRandom !== !!random || (every && minutesOfDay % every !== 0) || (randomMin && perDay && !generateDailyMinutes(date, perDay).includes(minutesOfDay))) {
+		if (enable === false || !!isRandom !== !!random || (every && minutesOfDay % every !== 0)) {
 			console.log(`monitor id: ${id} skipped`);
 			continue;
+		}
+
+		if (randomMin && perDay) {
+			const dailyMinutes = generateDailyMinutes(date, perDay);
+			if (!dailyMinutes.includes(minutesOfDay)) {
+				console.log(`monitor id: ${id} skipped, ${minutesOfDay} not match ${JSON.stringify(dailyMinutes)}`);
+				continue;
+			}
 		}
 
 		console.log(`monitor id: ${id} start`);
