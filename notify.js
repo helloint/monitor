@@ -66,11 +66,14 @@ async function sendSynologyNotification(message) {
 
 	console.debug(`${JSON.stringify(options)}`);
 
+	console.debug(notifyServer);
+
 	try {
 		await fetch(`${notifyServer}/webapi/entry.cgi?api=SYNO.Chat.External&method=incoming&version=2`, options);
 		console.log('Synology Chat notification sent successfully');
 	} catch (error) {
 		console.error('Synology Chat notification failed:', error.message);
+		console.error(error);
 		console.error(JSON.stringify(error));
 	}
 }
