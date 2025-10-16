@@ -14,7 +14,7 @@ const main = async (isRandom) => {
 	const date = new Date();
 	const minutesOfDay = date.getHours() * 60 + date.getMinutes();
 	console.log(`minutesOfDay: ${minutesOfDay}`);
-	const configs = readDataFile(`${DATA_ROOT}config.json`);
+	const configs = readDataFile(`${DATA_ROOT}config2.json`);
 	for (const config of configs) {
 		const {
 			id, url, options,
