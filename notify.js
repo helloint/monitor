@@ -1,5 +1,5 @@
 async function main() {
-	const messages = process.env.messages; // 从detect.js传入的通知消息列表
+	const messages = process.env.data;
 
 	if (messages && messages.trim() !== '') {
 		const messageList = JSON.parse(messages);
@@ -49,7 +49,7 @@ async function sendSynologyNotification(message) {
 
 	const data = {
 		payload: JSON.stringify({
-			text: message.join('\n')
+			text: message
 		}),
 		token: notifyToken
 	};
