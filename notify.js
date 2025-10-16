@@ -36,6 +36,7 @@ async function sendNotificationByType(message, type) {
 
 // 发送Synology Chat通知
 async function sendSynologyNotification(message) {
+	console.debug('sendSynologyNotification');
 	const notifyServer = process.env.notify_server;
 	const notifyToken = process.env.notify_token;
 	
@@ -55,6 +56,8 @@ async function sendSynologyNotification(message) {
 		method: 'POST',
 		body: Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&')
 	};
+
+	console.debug(`${JSON.stringify(options)}`);
 	
 	try {
 		await fetch(`${notifyServer}/webapi/entry.cgi?api=SYNO.Chat.External&method=incoming&version=2`, options);
@@ -66,6 +69,7 @@ async function sendSynologyNotification(message) {
 
 // 发送pushplus通知
 async function sendPushplusNotification(message) {
+	console.debug('sendPushplusNotification');
 	const pushplusToken = process.env.pushplus_notify_token;
 	const pushplusServer = process.env.pushplus_notify_server || 'http://www.pushplus.plus/send';
 	
