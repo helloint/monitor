@@ -71,6 +71,7 @@ async function sendSynologyNotification(message) {
 		console.log('Synology Chat notification sent successfully');
 	} catch (error) {
 		console.error('Synology Chat notification failed:', error.message);
+		console.error(JSON.stringify(error));
 	}
 }
 
