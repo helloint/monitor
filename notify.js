@@ -1,12 +1,15 @@
 async function main() {
-	const messages = process.env.data;
+	const data = process.env.data;
 
-	if (messages && messages.trim() !== '') {
-		const messageList = JSON.parse(messages);
-		console.log(`收到 ${messageList.length} 条通知消息`);
+	console.debug(data);
+
+	if (data && data.trim() !== '') {
+		const notifyItems = JSON.parse(data);
+		console.log(`收到 ${notifyItems.length} 条通知消息`);
 
 		// 处理每条通知消息
-		for (const notifyItem of messageList) {
+		for (const notifyItem of notifyItems) {
+			console.debug(JSON.stringify(notifyItem));
 			const { message, types } = notifyItem;
 			console.log(`发送消息: ${message}`);
 			console.log(`通知类型: ${types.join(', ')}`);
