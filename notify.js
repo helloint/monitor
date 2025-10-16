@@ -36,8 +36,8 @@ async function sendNotificationByType(message, type) {
 
 // 发送Synology Chat通知
 async function sendSynologyNotification(message) {
-	const notifyServer = process.env.NOTIFY_SERVER;
-	const notifyToken = process.env.NOTIFY_TOKEN;
+	const notifyServer = process.env.notify_server;
+	const notifyToken = process.env.notify_token;
 	
 	if (!notifyServer || !notifyToken) {
 		console.log('Synology Chat: NOTIFY_SERVER 和 NOTIFY_TOKEN 环境变量必需');
@@ -66,8 +66,8 @@ async function sendSynologyNotification(message) {
 
 // 发送pushplus通知
 async function sendPushplusNotification(message) {
-	const pushplusToken = process.env.PUSHPLUS_NOTIFY_TOKEN;
-	const pushplusServer = process.env.PUSHPLUS_NOTIFY_SERVER || 'http://www.pushplus.plus/send';
+	const pushplusToken = process.env.pushplus_notify_token;
+	const pushplusServer = process.env.pushplus_notify_server || 'http://www.pushplus.plus/send';
 	
 	if (!pushplusToken) {
 		console.log('Pushplus: PUSHPLUS_NOTIFY_TOKEN 环境变量必需');

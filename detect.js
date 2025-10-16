@@ -10,18 +10,6 @@ let needsNotify = false;
 const data = [];
 const notifyMessages = []; // 存储需要通知的消息和对应的通知类型
 
-// 添加通知消息的辅助函数
-const addNotifyMessage = (message, notifyType) => {
-	const types = notifyType ? 
-		notifyType.split(',').map(type => type.trim()) : 
-		['synology']; // 默认使用synology
-	
-	notifyMessages.push({
-		message: message,
-		types: types
-	});
-};
-
 const main = async (isRandom) => {
 	console.log(`main(random:${!!isRandom}) start`);
 	const date = new Date();
@@ -185,6 +173,18 @@ const processOptions = (options) => {
 
 	return options;
 }
+
+// 添加通知消息的辅助函数
+const addNotifyMessage = (message, notifyType) => {
+	const types = notifyType ? 
+		notifyType.split(',').map(type => type.trim()) : 
+		['synology']; // 默认使用synology
+	
+	notifyMessages.push({
+		message: message,
+		types: types
+	});
+};
 
 await main();
 await executeWithDelay(main, true);
