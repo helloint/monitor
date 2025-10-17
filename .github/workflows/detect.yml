@@ -53,7 +53,9 @@ jobs:
         if: needs.fetch.outputs.notify == 'true'
         uses: ./.github/workflows/notify.yml
         with:
-            msg: ${{ needs.fetch.outputs.data }}
+            data: ${{ needs.fetch.outputs.data }}
         secrets:
             notify_server: ${{ secrets.notify_server }}
             notify_token: ${{ secrets.notify_token }}
+            pushplus_notify_token: ${{ secrets.pushplus_notify_token }}
+            pushplus_notify_server: ${{ secrets.pushplus_notify_server }}

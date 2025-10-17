@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 
 // Needed to get __filename and __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -149,7 +149,5 @@ export const generateDailyMinutes = (date, count = 10) => {
 	}
 
 	// 转换为数组并排序
-	const ret = Array.from(minutes).sort((a, b) => a - b).slice(0, count);
-	console.log(`ret: ` + JSON.stringify(ret));
-	return ret;
+	return Array.from(minutes).sort((a, b) => a - b).slice(0, count);
 }

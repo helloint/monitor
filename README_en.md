@@ -38,7 +38,7 @@ For example, Linux's cron:
 }
 ```
 
-### Send a notification when the file content meets specific conditions (currently only supports Synology Chat).
+### Send a notification when the file content meets specific conditions (supports Synology Chat and pushplus).
 ```json
 {
 	"id": "livescore",
@@ -50,6 +50,7 @@ For example, Linux's cron:
 	],
 	"condition": "length",
 	"notify": true,
+	"notifyType": "synology,pushplus",
 	"notifyCondition": "length > 0"
 }
 ```
@@ -70,6 +71,7 @@ For example, Linux's cron:
 | condition       | Additional conditions for file comparison                      |         | No       |
 | format          | Whether to format the saved data                               | False   | No       |
 | notify          | Whether to enable notifications                                | False   | No       |
+| notifyType      | Notification type, supports synology, pushplus, multiple types separated by commas | synology | No       |
 | notifyCondition | Additional conditions for notifications                        |         | No       |
 | errorCondition  | Error conditions that trigger logging and notifications        |         | No       |
 
@@ -78,5 +80,34 @@ For example, Linux's cron:
 |--------------------|------------------------------------------|----------|
 | DATA_REPO          | Data repository                          | Yes      |
 | DATA_REPO_PAT      | PAT to access the data repository        | Yes      |
-| NOTIFY_SERVER      | Request URL for the notification service | No       |
-| NOTIFY_TOKEN       | Token for the notification service       | No       |
+| NOTIFY_SERVER      | Synology Chat server address             | No       |
+| NOTIFY_TOKEN       | Synology Chat webhook token              | No       |
+| PUSHPLUS_NOTIFY_TOKEN | pushplus push token                   | No       |
+| PUSHPLUS_NOTIFY_SERVER | pushplus server address (optional, defaults to official address) | No       |
+
+## Notification Configuration
+
+### Configuration Method
+Notification types are configured in `config.json` through the `notifyType` field, supporting the following values:
+- `synology` - Use Synology Chat notifications
+- `pushplus` - Use pushplus push notifications  
+- `synology,pushplus` - Use both notification methods simultaneously
+
+### Synology Chat Notifications
+- Set `notifyType: "synology"` in config.json (or leave empty, defaults to synology)
+- Set environment variable `NOTIFY_SERVER` to your Synology Chat server address
+- Set environment variable `NOTIFY_TOKEN` to your Synology Chat webhook token
+
+### pushplus Push Notifications
+- Set `notifyType: "pushplus"` in config.json
+- Set environment variable `PUSHPLUS_NOTIFY_TOKEN` to your pushplus token
+- Optionally set environment variable `PUSHPLUS_NOTIFY_SERVER` to customize server address
+
+### Multiple Notification Types
+- Set `notifyType: "synology,pushplus"` in config.json
+- Configure environment variables for both notification methods as described above
+
+### How to Get pushplus Token
+1. Visit [pushplus.plus](http://www.pushplus.plus) to register an account
+2. After logging in, get your token from "Personal Center"
+3. Set the token as the `PUSHPLUS_NOTIFY_TOKEN` environment variable

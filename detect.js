@@ -7,7 +7,7 @@ const DATA_ROOT = args.length > 0 ? (!args[0].endsWith('/') ? args[0] + '/' : ar
 
 let hasNewFile = false;
 let needsNotify = false;
-const data = [];
+const notifyData = [];
 
 const main = async (isRandom) => {
 	console.log(`main(random:${!!isRandom}) start`);
@@ -19,13 +19,21 @@ const main = async (isRandom) => {
 		const {
 			id, url, options,
 			format, filters, condition,
-			notify, notifyCondition, errorCondition,
+			notify, notifyType, notifyCondition, errorCondition,
 			every, random, record = true, randomMin, perDay,
 			enable
 		} = config;
-		if (enable === false || !!isRandom !== !!random || (every && minutesOfDay % every !== 0) || (randomMin && perDay && !generateDailyMinutes(date, perDay).includes(minutesOfDay))) {
+		if (enable === false || !!isRandom !== !!random || (every && minutesOfDay % every !== 0)) {
 			console.log(`monitor id: ${id} skipped`);
 			continue;
+		}
+
+		if (randomMin && perDay) {
+			const dailyMinutes = generateDailyMinutes(date, perDay);
+			if (!dailyMinutes.includes(minutesOfDay)) {
+				console.log(`monitor id: ${id} skipped, ${minutesOfDay} not match ${JSON.stringify(dailyMinutes)}`);
+				continue;
+			}
 		}
 
 		console.log(`monitor id: ${id} start`);
@@ -34,26 +42,23 @@ const main = async (isRandom) => {
 			const result = await monitorFile(id, url, processedOptions, format, filters, condition);
 			if (result && record) {
 				hasNewFile = true;
-				if (notify || notifyCondition) {
+				if (notify) {
 					if (!notifyCondition || eval(`result${notifyCondition}`)) {
 						const msg = `id: ${id} content changed, condition: ${notifyCondition || true} match`;
 						console.log(msg);
-						data.push(msg);
-						needsNotify = true;
+						addNotifyMessage(msg, notifyType);
 					}
 				}
 
 				if (errorCondition && eval(`result.${errorCondition}`)) {
 					const msg = `id: ${id} errors, condition: ${errorCondition} match`;
 					console.log(msg);
-					data.push(msg);
-					needsNotify = true;
+					addNotifyMessage(msg, notifyType);
 				}
 			}
 		} catch (e) {
 			console.error('There was a problem with your fetch operation:', e);
-			data.push(e.toString());
-			needsNotify = true;
+			addNotifyMessage(e.toString(), notifyType);
 		}
 		console.log(`monitor id: ${id} end`);
 	}
@@ -164,8 +169,24 @@ const processOptions = (options) => {
 	return options;
 }
 
+// 添加通知消息的辅助函数
+const addNotifyMessage = (message, notifyType) => {
+	const types = notifyType ?
+		notifyType.split(',').map(type => type.trim()) :
+		['synology']; // 默认使用synology
+
+	notifyData.push({
+		message: message,
+		types: types
+	});
+
+	needsNotify = true;
+};
+
 await main();
 await executeWithDelay(main, true);
 
-setOutput('data', data);
 setOutput('notify', needsNotify);
+if (needsNotify) {
+	setOutput('data', notifyData);
+}

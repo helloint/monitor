@@ -2,14 +2,18 @@ name: Notify
 on:
     workflow_call:
         inputs:
-            msg:
+            data:
                 required: true
                 type: string
         secrets:
             notify_server:
-                required: true
+                required: false
             notify_token:
-                required: true
+                required: false
+            pushplus_notify_token:
+                required: false
+            pushplus_notify_server:
+                required: false
 
 jobs:
     build:
@@ -22,6 +26,8 @@ jobs:
               run: |
                   node notify.js
               env:
-                  msg: ${{ inputs.msg }}
+                  data: ${{ inputs.data }}
                   notify_server: ${{ secrets.notify_server }}
                   notify_token: ${{ secrets.notify_token }}
+                  pushplus_notify_token: ${{ secrets.pushplus_notify_token }}
+                  pushplus_notify_server: ${{ secrets.pushplus_notify_server }}
