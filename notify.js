@@ -1,15 +1,12 @@
 async function main() {
 	const data = process.env.data;
 
-	console.debug(data);
-
 	if (data && data.trim() !== '') {
 		const notifyItems = JSON.parse(data);
 		console.log(`收到 ${notifyItems.length} 条通知消息`);
 
 		// 处理每条通知消息
 		for (const notifyItem of notifyItems) {
-			console.debug(JSON.stringify(notifyItem));
 			const { message, types } = notifyItem;
 			console.log(`发送消息: ${message}`);
 			console.log(`通知类型: ${types.join(', ')}`);
@@ -39,16 +36,13 @@ async function sendNotificationByType(message, type) {
 
 // 发送Synology Chat通知
 async function sendSynologyNotification(message) {
-	console.debug('sendSynologyNotification');
 	const notifyServer = process.env.notify_server;
 	const notifyToken = process.env.notify_token;
 
 	if (!notifyServer || !notifyToken) {
-		console.log('Synology Chat: NOTIFY_SERVER 和 NOTIFY_TOKEN 环境变量必需');
+		console.log('Synology Chat: NOTIFY_SERVER 或 NOTIFY_TOKEN 环境变量未配置');
 		return;
 	}
-
-	console.debug(`${JSON.stringify(message)}`);
 
 	const data = {
 		payload: JSON.stringify({
@@ -57,35 +51,26 @@ async function sendSynologyNotification(message) {
 		token: notifyToken
 	};
 
-	console.debug(`${JSON.stringify(data)}`);
-
 	const options = {
 		method: 'POST',
 		body: Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&')
 	};
-
-	console.debug(`${JSON.stringify(options)}`);
-
-	console.debug(notifyServer);
 
 	try {
 		await fetch(`${notifyServer}/webapi/entry.cgi?api=SYNO.Chat.External&method=incoming&version=2`, options);
 		console.log('Synology Chat notification sent successfully');
 	} catch (error) {
 		console.error('Synology Chat notification failed:', error.message);
-		console.error(error);
-		console.error(JSON.stringify(error));
 	}
 }
 
 // 发送pushplus通知
 async function sendPushplusNotification(message) {
-	console.debug('sendPushplusNotification');
 	const pushplusToken = process.env.pushplus_notify_token;
 	const pushplusServer = process.env.pushplus_notify_server || 'http://www.pushplus.plus/send';
 
 	if (!pushplusToken) {
-		console.log('Pushplus: PUSHPLUS_NOTIFY_TOKEN 环境变量必需');
+		console.log('Pushplus: PUSHPLUS_NOTIFY_TOKEN 环境变量未配置');
 		return;
 	}
 
